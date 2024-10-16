@@ -1,15 +1,11 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client'
 
-declare global {
-  // This prevents TypeScript errors when hot-reloading
-  var prisma: PrismaClient | undefined;
+// @ts-expect-error: `prisma` might not be defined globally on first load
+const prisma = global.prisma || new PrismaClient()
+
+if (process.env.NODE_ENV === 'development') {
+  // @ts-expect-error: `prisma` might not be defined globally on first load
+  global.prisma = prisma
 }
 
-// Use a global variable in development to avoid re-instantiating PrismaClient
-const prisma = global.prisma || new PrismaClient();
-
-if (process.env.NODE_ENV === "development") {
-  global.prisma = prisma;
-}
-
-export default prisma;
+export default prisma
