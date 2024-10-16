@@ -22,6 +22,7 @@
     "husky": "^9.1.6",
     "lint-staged": "^15.2.10",
     "next": "14.2.15",
+    "next-auth": "^5.0.0-beta.22",
     "prettier-plugin-tailwindcss": "^0.6.8",
     "react": "^18",
     "react-dom": "^18"
@@ -41,6 +42,6 @@
     "typescript": "^5"
   },
   "lint-staged": {
-  "*.{ts,tsx,json,css,md}": "prettier --write"
-}
+    "*.{ts,tsx,json,css,md}": "prettier --write"
+  }
 }
