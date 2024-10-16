@@ -41,6 +41,6 @@
     "typescript": "^5"
   },
   "lint-staged": {
-  "*.{ts,tsx,json,css,md}": "prettier"
+  "*.{ts,tsx,json,css,md}": "prettier --write"
 }
 }
