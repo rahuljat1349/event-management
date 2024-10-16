@@ -1,6 +1,6 @@
-import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
-import { NextResponse } from "next/server";
+import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
+import { NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
@@ -11,8 +11,8 @@ export async function POST(req: Request) {
     // Validate the required fields
     if (!name || !email || !password) {
       return NextResponse.json(
-        { message: "Name, email, and password are required" },
-        { status: 400 }
+        { message: 'Name, email, and password are required' },
+        { status: 400 },
       );
     }
 
@@ -23,8 +23,8 @@ export async function POST(req: Request) {
 
     if (existingUser) {
       return NextResponse.json(
-        { message: "User already exists" },
-        { status: 409 }
+        { message: 'User already exists' },
+        { status: 409 },
       );
     }
 
@@ -37,14 +37,14 @@ export async function POST(req: Request) {
         name,
         email,
         password: hashedPassword,
-        role: role || "USER", // Default role to 'USER'
+        role: role || 'USER', // Default role to 'USER'
       },
     });
 
     // Respond with success and exclude password
     return NextResponse.json(
       {
-        message: "Signed Up successfully",
+        message: 'Signed Up successfully',
         user: {
           id: newUser.id,
           name: newUser.name,
@@ -53,13 +53,13 @@ export async function POST(req: Request) {
           createdAt: newUser.createdAt,
         },
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { message: "Internal server error" },
-      { status: 500 }
+      { message: 'Internal server error' },
+      { status: 500 },
     );
   }
 }
