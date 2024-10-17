@@ -15,7 +15,10 @@ export default async function Home() {
         <ToggleThemeButton />
       </div>
       {session && session.user ? (
-        <h2>{session.user?.name}</h2>
+        <>
+          <h2>{session.user?.name}</h2>
+          <p>{session.user?.email}</p>
+        </>
       ) : (
         <>
           <div>
