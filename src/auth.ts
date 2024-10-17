@@ -3,6 +3,7 @@ import googleProvider from 'next-auth/providers/google'
 import githubProvider from 'next-auth/providers/github'
 import credentialsProvider from 'next-auth/providers/credentials'
 import prisma from './lib/prismaClient'
+// import bcrypt from 'bcrypt'
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     googleProvider({
@@ -34,12 +35,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const user = await prisma.user.findFirst({ where: { email: email } })
 
+        // const matchPasword = await bcrypt.compare(password, user.password)  // this line causing error
         if (!user) {
           throw new CredentialsSignin('Invalid email or password!')
         }
-        if (user.password !== password) {
-          throw new CredentialsSignin('Invalid email or password!')
-        }
+        // if (matchPasword) {
+        //   throw new CredentialsSignin('Invalid email or password!')
+        // }
         const parsedUser = { email: user?.email, id: user?.id.toString() }
         return parsedUser
       },

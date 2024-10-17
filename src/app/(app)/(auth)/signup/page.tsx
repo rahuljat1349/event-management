@@ -17,38 +17,45 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
-import { signIn as reactSignIn } from 'next-auth/react'
 import { Loader2 } from 'lucide-react'
 import { useState } from 'react'
-import { SignInSchema } from '@/app/schemas/auth'
+import { SignUpSchema } from '@/app/schemas/auth'
 import { SignIn } from '@/lib/signin'
+import axios from 'axios'
+import { ApiResponse } from '@/types/axiosResponse'
 
 const Page = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const form = useForm<z.infer<typeof SignInSchema>>({
-    resolver: zodResolver(SignInSchema),
+  const form = useForm<z.infer<typeof SignUpSchema>>({
+    resolver: zodResolver(SignUpSchema),
     defaultValues: {
+      name: '',
       email: '',
       password: '',
+      confirmPassword: '',
     },
   })
 
-  async function onSubmit(data: z.infer<typeof SignInSchema>) {
+  async function onSubmit(data: z.infer<typeof SignUpSchema>) {
     setIsSubmitting(true)
     console.log(data)
     try {
-      const result = await reactSignIn('credentials', {
-        redirect: false,
+      const result = await axios.post<ApiResponse>('/api/auth/signup', {
+        name: data.name,
         email: data.email,
         password: data.password,
+        confirmPassword: data.confirmPassword,
       })
       console.log(result)
 
-      if (result?.error) {
+      if (!result) {
         // toast error
       }
       //toast success
+      if (result.data.success == true) {
+        alert('Signed Up successfully.')
+      }
     } catch (error) {
       console.log(error)
       // toast error (unexpected)
@@ -62,10 +69,26 @@ const Page = () => {
       <div className="rounded-xl bg-white p-10 text-black md:w-[30%]">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <span className="text-4xl font-bold">Sign In</span>
+            <span className="text-4xl font-bold">Create Your Account</span>
             <p className="text-[#607D8B]">
-              Enter your email and password to sign in.
+              Enter your email and password to create an account for free.
             </p>
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-semibold">Your name</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="border-gray-300 focus:border-gray-700"
+                      placeholder="John Doe"
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="email"
@@ -82,12 +105,15 @@ const Page = () => {
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="font-semibold">Password</FormLabel>
+                  <FormLabel className="font-semibold">
+                    Create a password
+                  </FormLabel>
                   <FormControl>
                     <Input
                       className="border-gray-300 focus:border-gray-700"
@@ -98,9 +124,25 @@ const Page = () => {
                 </FormItem>
               )}
             />
-            <p className="text-end text-xs font-semibold">
-              <a href="">Forgot Password?</a>
-            </p>
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="font-semibold">
+                    Confirn Password
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      className="border-gray-300 focus:border-gray-700"
+                      placeholder="********"
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
             <Button
               className="w-full bg-black p-2 text-xs font-bold text-white hover:bg-[#3d3d3d]"
               type="submit"
@@ -108,7 +150,7 @@ const Page = () => {
               {isSubmitting ? (
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               ) : (
-                'SIGN IN'
+                'CREATE ACCOUNT'
               )}
             </Button>
 
@@ -136,9 +178,9 @@ const Page = () => {
 
           <p className="text-center text-sm text-[#607D8B]">
             {' '}
-            Not registered?{' '}
-            <a className="font-semibold text-black" href="/signup">
-              Create Account
+            Already have an account?{' '}
+            <a className="font-semibold text-black" href="/signin">
+              Login Here
             </a>
           </p>
         </Form>

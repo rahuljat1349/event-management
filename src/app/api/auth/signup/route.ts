@@ -4,25 +4,31 @@ import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
   try {
-    const { name, email, password } = await req.json()
+    const { name, email, password, confirmPassword } = await req.json()
 
     // Validate the required fields
-    if (!name || !email || !password) {
+    if (!email || !password || !confirmPassword) {
       return NextResponse.json(
-        { message: 'Name, email, and password are required' },
+        { message: 'All fields are required' },
         { status: 400 },
       )
     }
 
     // Check if the user already exists
     const existingUser = await prisma.user.findUnique({
-      where: { email },
+      where: { email: email },
     })
 
     if (existingUser) {
       return NextResponse.json(
         { message: 'User already exists' },
         { status: 409 },
+      )
+    }
+    if (password != confirmPassword) {
+      return NextResponse.json(
+        { message: 'Password does not match.' },
+        { status: 401 },
       )
     }
 
@@ -48,8 +54,8 @@ export async function POST(req: Request) {
           name: newUser.name,
           email: newUser.email,
           role: newUser.role,
-          createdAt: newUser.createdAt,
         },
+        success: true,
       },
       { status: 201 },
     )
