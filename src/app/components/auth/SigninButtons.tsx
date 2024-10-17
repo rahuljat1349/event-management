@@ -11,13 +11,13 @@ export function GoogleSigninButton() {
     <>
       {pending ? (
         <Button variant={'outline'}>
-          <Loader2 className="mr-2 size-4 animate-spin" />
+          <Loader2 className="size-2 animate-spin" />
           Please Wait
         </Button>
       ) : (
-        <Button variant={'outline'}>
-          <FcGoogle className="mr-2 size-4" />
-          Continue With Google
+        <Button className="w-full text-center" variant={'default'}>
+          <FcGoogle />
+          <span className="text-xs font-semibold">SIGN IN WITH GOOGLE</span>
         </Button>
       )}
     </>
@@ -30,13 +30,13 @@ export function GithubSigninButton() {
     <>
       {pending ? (
         <Button variant={'outline'}>
-          <Loader2 className="mr-2 size-4 animate-spin" />
+          <Loader2 className="size-2 animate-spin" />
           Please Wait
         </Button>
       ) : (
-        <Button variant={'outline'}>
-          <SiGithub className="mr-2 size-4" />
-          Continue With GitHub
+        <Button className="w-full text-center" variant={'default'}>
+          <SiGithub />
+          <span className="text-xs font-semibold">SIGN IN WITH GITHUB</span>
         </Button>
       )}
     </>
