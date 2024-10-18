@@ -23,8 +23,9 @@ import { SignUpSchema } from '@/app/schemas/auth'
 import { SignIn } from '@/lib/signin'
 import axios from 'axios'
 import { ApiResponse } from '@/types/axiosResponse'
-
+import { useRouter } from 'next/navigation'
 const Page = () => {
+  const router = useRouter()
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const form = useForm<z.infer<typeof SignUpSchema>>({
@@ -55,6 +56,7 @@ const Page = () => {
       //toast success
       if (result.data.success == true) {
         alert('Signed Up successfully.')
+        router.replace(`/verify/${result.data.user.email}`)
       }
     } catch (error) {
       console.log(error)
