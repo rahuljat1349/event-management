@@ -17,8 +17,9 @@ export async function POST(req: Request) {
     )
   }
   try {
-    const userId = session.user.id
-    const { eventId } = await req.json()
+    const userId = session.user.id as string 
+
+    const { eventId }: { eventId :string} = await req.json()
 
     if (!eventId) {
       return NextResponse.json(

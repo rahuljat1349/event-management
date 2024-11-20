@@ -72,7 +72,7 @@ async function getEvent(eventId: string) {
   }
 }
 
-export const EventPage = async ({
+const page = async ({
   params,
 }: {
   params: { eventId: string }
@@ -303,4 +303,4 @@ export const EventPage = async ({
   )
 }
 
-export default EventPage
+export default page
