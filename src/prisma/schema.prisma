@@ -1,61 +1,117 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-  provider = "postgresql" 
+  provider = "postgresql"
   url      = env("DATABASE_URL")
-}
-
-model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String?
-  loginCode String?
-  verifyCode String?
-  isVerified Boolean @default(false)
-  verifyCodeExpiry DateTime?
-  role      Role     @default(USER) 
-  events    Event[]  @relation("OrganizerEvents")
-  tickets   Ticket[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Event {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String?
-  date        DateTime
-  venue       Venue    @relation(fields: [venueId], references: [id])
-  venueId     Int
-  organizer   User     @relation("OrganizerEvents", fields: [organizerId], references: [id])
-  organizerId Int
-  tickets     Ticket[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model Ticket {
-  id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    Int
-  event     Event    @relation(fields: [eventId], references: [id])
-  eventId   Int
-  price     Float
-  createdAt DateTime @default(now())
-}
-
-model Venue {
-  id        Int      @id @default(autoincrement())
-  name      String
-  address   String
-  events    Event[]
-  createdAt DateTime @default(now())
 }
 
 enum Role {
   USER
   ADMIN
+}
+
+model User {
+  id              String     @id @default(cuid())
+  name            String
+  email           String     @unique
+  password        String
+  role            Role       @default(USER)
+  emailVerified   DateTime?
+  image           String?
+  followers       Follower[] @relation("followed")
+  following       Follower[] @relation("follower")
+  accounts        Account[]
+  sessions        Session[]
+  organizedEvents Event[]    @relation("OrganizerRelation")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Ticket    Ticket[]
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+model Event {
+  id             String    @id @default(cuid())
+  title          String
+  description    String?
+  eventURL       String?
+  startDate      String
+  endDate        String?
+  content        String?   @db.Text
+  ticketPrice    String?
+  categoryId     String?
+  category       Category? @relation(fields: [categoryId], references: [id])
+  location       String?
+  isPrivate      Boolean
+  isVenue        Boolean
+  isPaidEvent    Boolean
+  isSeatsLimited Boolean
+  seats          String?
+  featuredImage  String
+  organizerId    String
+  organizer      User      @relation(fields: [organizerId], references: [id], name: "OrganizerRelation")
+  attendees      Ticket[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Follower {
+  id         String   @id @default(cuid())
+  follower   User     @relation("follower", fields: [followerId], references: [id])
+  followerId String
+  followed   User     @relation("followed", fields: [followedId], references: [id])
+  followedId String
+  createdAt  DateTime @default(now())
+}
+
+model Ticket {
+  id      String  @id @default(cuid())
+  eventId String
+  event   Event   @relation(fields: [eventId], references: [id])
+  userId  String
+  User    User?   @relation(fields: [userId], references: [id])
+}
+
+model Category {
+  id    String  @id @default(cuid())
+  name  String
+  Event Event[]
 }

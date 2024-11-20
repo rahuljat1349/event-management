@@ -1,147 +1,55 @@
-'use client'
-
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { z } from 'zod'
 import {
   GoogleSigninButton,
   GithubSigninButton,
 } from '@/app/components/auth/SigninButtons'
-import { Button } from '@/components/ui/button'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Separator } from '@/components/ui/separator'
-import { signIn as reactSignIn } from 'next-auth/react'
-import { Loader2 } from 'lucide-react'
-import { useState } from 'react'
-import { SignInSchema } from '@/app/schemas/auth'
-import { SignIn } from '@/lib/signin'
+import { signIn } from '@/auth'
+import SignInForm from './SigninForm'
+import Link from 'next/link'
 
-const Page = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const form = useForm<z.infer<typeof SignInSchema>>({
-    resolver: zodResolver(SignInSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
-  })
-
-  async function onSubmit(data: z.infer<typeof SignInSchema>) {
-    setIsSubmitting(true)
-    console.log(data)
-    try {
-      const result = await reactSignIn('credentials', {
-        redirect: false,
-        email: data.email,
-        password: data.password,
-      })
-      console.log(result)
-
-      if (result?.error) {
-        // toast error
-      }
-      //toast success
-    } catch (error) {
-      console.log(error)
-      // toast error (unexpected)
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
+const Page = async () => {
   return (
-    <div className="flex h-screen items-center justify-center">
-      <div className="rounded-xl bg-white p-10 text-black md:w-[30%]">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <span className="text-4xl font-bold">Sign In</span>
-            <p className="text-[#607D8B]">
-              Enter your email and password to sign in.
-            </p>
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-semibold">Your email</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="border-gray-300 focus:border-gray-700"
-                      placeholder="name@gmail.com"
-                      {...field}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="font-semibold">Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="border-gray-300 focus:border-gray-700"
-                      placeholder="********"
-                      {...field}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <p className="text-end text-xs font-semibold">
-              <a href="">Forgot Password?</a>
-            </p>
-            <Button
-              className="w-full bg-black p-2 text-xs font-bold text-white hover:bg-[#3d3d3d]"
-              type="submit"
-            >
-              {isSubmitting ? (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              ) : (
-                'SIGN IN'
-              )}
-            </Button>
-
-            <p className="text-center text-xs text-[#607D8B]">Or</p>
-          </form>
-          <div className="my-4">
-            <div
-              onClick={() => {
-                SignIn('google')
+    <div className="flex min-h-screen py-28 items-center justify-center px-4">
+      <div className="mx-auto max-w-[536px] rounded-xl bg-white p-10 text-black shadow-2xl">
+        <div>
+          <div>
+            <SignInForm />
+            <div className="my-4 flex items-center">
+              <div className="flex-grow border-t border-gray-300"></div>
+              <span className="px-3 text-sm text-gray-500">OR</span>
+              <div className="flex-grow border-t border-gray-300"></div>
+            </div>
+            <form
+              action={async () => {
+                'use server'
+                await signIn('google')
               }}
             >
               <GoogleSigninButton />
-            </div>
-
-            <Separator className="my-1 bg-gray-300" />
-
-            <div
-              onClick={() => {
-                SignIn('github')
+            </form>
+            <div className="min-h-[16px]"></div>
+            <form
+              className="mt-3"
+              action={async () => {
+                'use server'
+                await signIn('github')
               }}
             >
               <GithubSigninButton />
+            </form>
+
+            <div className="mt-6 text-center">
+              <p className="text-sm text-[#607D8B]">
+                Not registered?
+                <Link
+                  className="ml-1 font-bold text-[#212121]"
+                  href={'/signup'}
+                >
+                  Create Account
+                </Link>
+              </p>
             </div>
           </div>
-
-          <p className="text-center text-sm text-[#607D8B]">
-            {' '}
-            Not registered?{' '}
-            <a className="font-semibold text-black" href="/signup">
-              Create Account
-            </a>
-          </p>
-        </Form>
+        </div>
       </div>
     </div>
   )

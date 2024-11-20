@@ -3,23 +3,15 @@ export const SignInSchema = z.object({
   email: z.string().email({ message: 'Must be a valid email address.' }),
   password: z
     .string()
-    .min(4, { message: 'Password must be at least 4 characters.' }),
+    .min(8, { message: 'Password must be at least 4 characters.' }),
 })
 export const SignUpSchema = z.object({
   name: z.string().min(3, { message: 'Name should be at 3 characters long' }),
   email: z.string().email({ message: 'Must be a valid email address.' }),
   password: z
     .string()
-    .min(4, { message: 'Password must be at least 4 characters.' }),
+    .min(8, { message: 'Password must be at least 4 characters.' }),
   confirmPassword: z
     .string()
-    .min(4, { message: 'Password must be at least 4 characters.' }),
-})
-
-export const verifyCodeSchema = z.object({
-  email: z.string().email({ message: 'Must be a valid email address.' }),
-  code: z
-    .string()
-    .min(6, { message: 'Code must be 6 characters long.' })
-    .max(6, { message: 'Code must be 6 characters long.' }),
+    .min(8, { message: 'Password must be at least 4 characters.' }),
 })

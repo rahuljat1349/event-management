@@ -10,14 +10,17 @@ export function GoogleSigninButton() {
   return (
     <>
       {pending ? (
-        <Button variant={'outline'}>
+        <Button
+          variant={'outline'}
+          className="w-full py-[20px] text-black dark:text-white"
+        >
           <Loader2 className="size-2 animate-spin" />
           Please Wait
         </Button>
       ) : (
         <Button className="w-full text-center" variant={'default'}>
           <FcGoogle />
-          <span className="text-xs font-semibold">SIGN IN WITH GOOGLE</span>
+          <span className="font-semibold">SIGN IN WITH GOOGLE</span>
         </Button>
       )}
     </>
@@ -29,14 +32,17 @@ export function GithubSigninButton() {
   return (
     <>
       {pending ? (
-        <Button variant={'outline'}>
+        <Button
+          variant={'outline'}
+          className="w-full py-[20px] text-black dark:text-white"
+        >
           <Loader2 className="size-2 animate-spin" />
           Please Wait
         </Button>
       ) : (
         <Button className="w-full text-center" variant={'default'}>
           <SiGithub />
-          <span className="text-xs font-semibold">SIGN IN WITH GITHUB</span>
+          <span className="font-semibold">SIGN IN WITH GITHUB</span>
         </Button>
       )}
     </>
